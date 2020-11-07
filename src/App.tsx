@@ -2,7 +2,6 @@ import * as React from "react";
 import { useRef } from "react";
 import { makeScene } from "./scene";
 import { makeEnv } from "./env";
-import "./styles.css";
 
 export default function App() {
     const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -1,26 +1,10 @@
-export interface Point {
-    x: number;
-    y: number;
-}
+import { Point } from "./types";
+import { Env } from "./env";
 
-interface SplineOptions {
-    points?: Point[];
-    resolution?: number;
-    tension?: number;
-}
-
-export const makeSpline = (options: SplineOptions) => {
-    const points = options.points || [];
-    const resolution = options.resolution || 1000;
-    const tension = options.tension || 0.85;
-
+export const makeSpline = (env: Env, points: Point[], resolution = 1000, tension = 0.85) => {
     const pointsCount = points.length;
     if (pointsCount < 3) {
-        const draw = (ctx: CanvasRenderingContext2D): void => {
-            // do nothing
-        };
-
-        return { draw };
+        return;
     }
 
     const centers = [];
@@ -81,21 +65,8 @@ export const makeSpline = (options: SplineOptions) => {
         return bezier(t1, points[n], controls[n][1], controls[n + 1][0], points[n + 1]);
     };
 
-    const draw = (ctx: CanvasRenderingContext2D): void => {
-        ctx.beginPath();
-        for (let i = 0; i < resolution; i++) {
-            const pos1 = pos(i); //bezier(i/max,p1, c1, c2, p2);
-            // if(Math.floor(i/100)%2==0) ctx.lineTo(pos.x, pos.y);
-            if (i !== 0) {
-                ctx.lineTo(pos1.x, pos1.y);
-            } else {
-                ctx.moveTo(pos1.x, pos1.y);
-            }
-        }
-        ctx.stroke();
-    };
-
-    return {
-        draw,
-    };
+    const { addPoint } = env;
+    for (let i = 0; i < resolution; i++) {
+        addPoint(pos(i));
+    }
 };
