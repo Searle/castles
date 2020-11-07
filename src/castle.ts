@@ -37,28 +37,28 @@ const makeCrenels = (env: Env, rx0: number, rx1: number, ry: number) => {
     }
 };
 
-const makeCastlePart = (env: Env, rx0: number, rx1: number, ry: number, mayHaveRoof: boolean) => {
+const makeCastlePart = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number, mayHaveRoof: boolean) => {
     const { ctx, random, left, right, top, bottom } = env;
 
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 2;
 
-    const bottomY = bottom(9999);
-    const y = top(ry);
+    const y1 = bottom(ry1 || 9999);
+    const y0 = top(ry0);
     if (mayHaveRoof && random() < 0.5) {
-        makeRoof(env, rx0, rx1, ry);
+        makeRoof(env, rx0, rx1, ry0);
     } else {
-        makeCrenels(env, rx0, rx1, ry);
+        makeCrenels(env, rx0, rx1, ry0);
     }
     env.flushLines();
-    makeLine(env, left(rx0), bottomY, left(rx0), y);
-    makeLine(env, left(rx0), y, right(rx1), y);
-    makeLine(env, right(rx1), y, right(rx1), bottomY);
+    makeLine(env, left(rx0), y1, left(rx0), y0);
+    makeLine(env, left(rx0), y0, right(rx1), y0);
+    makeLine(env, right(rx1), y0, right(rx1), y1);
     env.flushLines();
 };
 
-export const makeCastle = (env: Env, rx0: number, rx1: number, ry: number, mayHaveRoof = false) => {
+export const makeCastle = (env: Env, rx0: number, rx1: number, ry0: number, ry1 = 0, mayHaveRoof = false) => {
     const { random, r, rmin } = env;
     if (rx1 === 0) {
         rx1 = rx0 + r(40 + random() * 60);
@@ -66,10 +66,10 @@ export const makeCastle = (env: Env, rx0: number, rx1: number, ry: number, mayHa
     const width = Math.floor(((1 + random()) * (rx1 - rx0)) / 2.5);
     if (width > 3 && width < rx1 - rx0 - rmin(10, 1)) {
         const rx = (rx1 + rx0) / 2;
-        const ry1 = ry - rmin(30 + random() * 20, 2);
-        makeCastle(env, rx - width / 2, rx + width / 2, ry1, true);
+        const ry_ = ry0 - rmin(30 + random() * 20, 2);
+        makeCastle(env, rx - width / 2, rx + width / 2, ry_, ry0, true);
         mayHaveRoof = false;
     }
-    makeCastlePart(env, rx0, rx1 - 1, ry, mayHaveRoof);
+    makeCastlePart(env, rx0, rx1 - 1, ry0, ry1, mayHaveRoof);
     return rx1 - rx0;
 };
