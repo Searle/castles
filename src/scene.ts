@@ -6,9 +6,10 @@ export const makeScene = (env: Env, width: number, height: number) => {
     ctx.fillStyle = "orange";
     ctx.fillRect(0, 0, width, height);
 
-    const single = !!!!0;
+    const single = !!0;
 
     let y = r(180);
+    let offsetY = 0;
     let oddY = false;
     while (y < r(height)) {
         let x = r(-80 + random() * 80);
@@ -20,7 +21,8 @@ export const makeScene = (env: Env, width: number, height: number) => {
             if (single) break;
         }
         if (single) break;
-        y += r(40 + random() * 40);
+        y += r(40 + offsetY + random() * 40);
+        offsetY += 15;
         oddY = !oddY;
     }
 };
