@@ -73,47 +73,54 @@ const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: numbe
     }
 };
 
-const makeCastlePart = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number, mayHaveRoof: boolean) => {
-    const { ctx, random, left, right, top, bottom } = env;
+export const makeCastle = (env: Env, rx0: number, rx1: number, ry0: number, ry1 = 0) => {
+    const { random } = env;
 
     const color = 255 - Math.floor(random() * 35);
     const greyColor = "rgb(" + color + "," + color + "," + color + ")";
     const redColor = "rgb(255," + (color - 50) + "," + (color - 50) + ")";
-    ctx.fillStyle = greyColor;
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 1.1;
 
-    const y1 = bottom(ry1 || 9999);
-    const y0 = top(ry0);
-    if (mayHaveRoof && random() < 0.5) {
-        ctx.fillStyle = redColor;
-        makeRoof(env, rx0, rx1, ry0);
-    } else {
-        makeCrenels(env, rx0, rx1, ry0);
-    }
-    env.flushLines();
+    const makeCastlePart = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number, mayHaveRoof: boolean) => {
+        const { ctx, random, left, right, top, bottom } = env;
 
-    ctx.fillStyle = greyColor;
-    makeLine(env, left(rx0), y1, left(rx0), y0);
-    makeLine(env, left(rx0), y0, right(rx1), y0);
-    makeLine(env, right(rx1), y0, right(rx1), y1);
-    env.flushLines();
+        ctx.fillStyle = greyColor;
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1.1;
 
-    makeWindows(env, rx0, rx1, ry0, ry1);
-};
+        if (mayHaveRoof && random() < 0.5) {
+            ctx.fillStyle = redColor;
+            makeRoof(env, rx0, rx1, ry0);
+        } else {
+            makeCrenels(env, rx0, rx1, ry0);
+        }
+        env.flushLines();
 
-export const makeCastle = (env: Env, rx0: number, rx1: number, ry0: number, ry1 = 0, mayHaveRoof = false) => {
-    const { random, r, rmin } = env;
-    if (rx1 === 0) {
-        rx1 = rx0 + r(40 + random() * 60);
-    }
-    const width = Math.floor(((1 + random()) * (rx1 - rx0)) / 2.5);
-    if (width > 3 && width < rx1 - rx0 - rmin(10, 1)) {
-        const rx = (rx1 + rx0) / 2;
-        const ry_ = ry0 - rmin(30 + random() * 20, 2);
-        makeCastle(env, rx - width / 2, rx + width / 2, ry_, ry0, true);
-        mayHaveRoof = false;
-    }
-    makeCastlePart(env, rx0, rx1 - 1, ry0, ry1, mayHaveRoof);
-    return rx1 - rx0;
+        ctx.fillStyle = greyColor;
+        const y1 = bottom(ry1 || 9999);
+        const y0 = top(ry0);
+        makeLine(env, left(rx0), y1, left(rx0), y0);
+        makeLine(env, left(rx0), y0, right(rx1), y0);
+        makeLine(env, right(rx1), y0, right(rx1), y1);
+        env.flushLines();
+
+        makeWindows(env, rx0, rx1, ry0, ry1);
+    };
+
+    const makeCastle_ = (env: Env, rx0: number, rx1: number, ry0: number, ry1 = 0, mayHaveRoof: boolean) => {
+        const { random, r, rmin, sceneWidth } = env;
+        if (rx1 === 0) {
+            rx1 = rx0 + r(40 + random() * Math.max(60, Math.min(120, sceneWidth * 0.1)));
+        }
+        const width = Math.floor(((1 + random()) * (rx1 - rx0)) / 2.5);
+        if (width > 3 && width < rx1 - rx0 - rmin(10, 1)) {
+            const rx = (rx1 + rx0) / 2;
+            const ry_ = ry0 - rmin(30 + random() * 20, 2);
+            makeCastle_(env, rx - width / 2, rx + width / 2, ry_, ry0, true);
+            mayHaveRoof = false;
+        }
+        makeCastlePart(env, rx0, rx1 - 1, ry0, ry1, mayHaveRoof);
+        return rx1 - rx0;
+    };
+
+    return makeCastle_(env, rx0, rx1, ry0, ry1, false);
 };

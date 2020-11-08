@@ -17,7 +17,7 @@ const xoshiro128ss = (a: number, b: number, c: number, d: number) => {
     };
 };
 
-export const makeEnv = (ctx: CanvasRenderingContext2D, height: number, RES = 8) => {
+export const makeEnv = (ctx: CanvasRenderingContext2D, width: number, height: number, RES = 8) => {
     let offsetY = 0;
     let points: Point[] = [];
     const random = xoshiro128ss(Date.now(), 2600980751997770790, 3131701164191746090, -3375623441569470803);
@@ -34,6 +34,8 @@ export const makeEnv = (ctx: CanvasRenderingContext2D, height: number, RES = 8) 
         right: (value: number) => value * RES + RES / 2,
         setOddY: (oddY: boolean) => (offsetY = oddY ? RES / 2 : 0),
         random,
+        sceneWidth: width,
+        sceneHeight: height,
         addPoint: (point: Point) => {
             if (points.length && points[points.length - 1].x === point.x && points[points.length - 1].y === point.y) {
                 return;
