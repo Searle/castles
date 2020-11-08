@@ -17,33 +17,43 @@ const xoshiro128ss = (a: number, b: number, c: number, d: number) => {
     };
 };
 
-export const makeEnv = (ctx: CanvasRenderingContext2D, width: number, height: number, RES = 8) => {
+export const makeEnv = (canvas: HTMLCanvasElement, width: number, height: number, resolution = 8) => {
+    const ctx = canvas.getContext("2d");
     let offsetY = 0;
     let points: Point[] = [];
     const random = xoshiro128ss(Date.now(), 2600980751997770790, 3131701164191746090, -3375623441569470803);
+    /// const random = xoshiro128ss(123000, 2600980751997770790, 3131701164191746090, -3375623441569470803);
     return {
-        ctx,
-        r: (value: number) => Math.floor(value / RES),
-        rmin: (value: number, min: number) => {
-            value = Math.floor(value / RES);
-            return value < min ? min : value;
-        },
-        top: (value: number) => value * RES + offsetY,
-        bottom: (value: number) => Math.min(value * RES + offsetY, height),
-        left: (value: number) => value * RES,
-        right: (value: number) => value * RES + RES / 2,
-        setOddY: (oddY: boolean) => (offsetY = oddY ? RES / 2 : 0),
+        canvas,
         random,
         sceneWidth: width,
         sceneHeight: height,
+        resolution,
+        r: (value: number) => Math.floor(value / resolution),
+        rmin: (value: number, min: number) => {
+            value = Math.floor(value / resolution);
+            return value < min ? min : value;
+        },
+        top: (value: number) => value * resolution + offsetY,
+        bottom: (value: number) => Math.min(value * resolution + offsetY, height),
+        left: (value: number) => value * resolution,
+        right: (value: number) => value * resolution + resolution / 2,
+        setOddY: (oddY: boolean) => (offsetY = oddY ? resolution / 2 : 0),
         addPoint: (point: Point) => {
             if (points.length && points[points.length - 1].x === point.x && points[points.length - 1].y === point.y) {
                 return;
             }
             points.push(point);
         },
+        withCtx: (handler: (ctx: CanvasRenderingContext2D) => void) => {
+            if (ctx !== null) {
+                handler(ctx);
+                return true;
+            }
+            return false;
+        },
         flushLines: () => {
-            if (points.length) {
+            if (ctx !== null && points.length) {
                 ctx.beginPath();
                 ctx.moveTo(points[0]?.x, points[0]?.y);
                 for (let i = 1; i < points.length; i++) {

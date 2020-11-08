@@ -9,3 +9,7 @@ Ideas:
 -   anaglyphic mode
 -   endless scroll
 -   parallax
+
+TODO:
+
+-   Use bezierCurves for spline algorithm

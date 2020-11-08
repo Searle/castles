@@ -1,31 +1,37 @@
 import { makeCastle } from "./castle";
-import { Env } from "./env";
+import { Env, makeEnv } from "./env";
 
 const makeSky = (env: Env) => {
-    const { ctx, sceneWidth, sceneHeight } = env;
-    ctx.beginPath();
-    ctx.fillStyle = "#87cefa";
-    ctx.fillRect(0, 0, sceneWidth, sceneHeight);
+    const { withCtx, sceneWidth, sceneHeight } = env;
+    withCtx((ctx) => {
+        ctx.beginPath();
+        ctx.fillStyle = "#87cefa";
+        ctx.fillRect(0, 0, sceneWidth, sceneHeight);
+        ctx.closePath();
+    });
 };
 
 const makeSun = (env: Env) => {
-    const { ctx, sceneWidth } = env;
+    const { withCtx, sceneWidth } = env;
     const x = sceneWidth / 4;
     const y = 50;
     const r = 40;
-    ctx.beginPath();
-    ctx.fillStyle = "#f9d71c";
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.closePath();
-
-    const addCircle = (dx: number, dy: number, dr: number) => {
+    withCtx((ctx) => {
         ctx.beginPath();
-        ctx.strokeStyle = "#f9d71c";
-        ctx.arc(x + dx, y + dy, r + dr, 0, 2 * Math.PI);
-        ctx.stroke();
+        ctx.fillStyle = "#f9d71c";
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fill();
         ctx.closePath();
-    };
+    });
+
+    const addCircle = (dx: number, dy: number, dr: number) =>
+        withCtx((ctx) => {
+            ctx.beginPath();
+            ctx.strokeStyle = "#f9d71c";
+            ctx.arc(x + dx, y + dy, r + dr, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.closePath();
+        });
 
     addCircle(-10, 5, 2);
     addCircle(-5, -2, 2);
@@ -33,27 +39,60 @@ const makeSun = (env: Env) => {
 };
 
 export const makeScene = (env: Env) => {
-    const { r, random, sceneWidth, sceneHeight } = env;
+    const { withCtx, r, random, left, top, sceneWidth, sceneHeight } = env;
     makeSky(env);
     makeSun(env);
 
     const single = !!0;
+    const time = Date.now();
 
-    let y = r(180);
+    const makerCanvas = document.createElement("canvas");
+    makerCanvas.width = sceneWidth;
+    makerCanvas.height = sceneHeight;
+    const makerEnv = makeEnv(makerCanvas, sceneWidth, sceneHeight);
+
+    let ry = r(180);
     let offsetY = 0;
     let oddY = false;
-    while (y < r(sceneHeight)) {
-        let x = r(-80 + random() * 80);
-        if (single) x = 40;
-        env.setOddY(oddY);
-        while (x < sceneWidth) {
-            const w = makeCastle(env, x, 0, y - r(random() * (25 + offsetY / 2)));
-            x += w + r(10 + random() * 60);
+    while (ry < r(sceneHeight)) {
+        let rx = r(-80 + random() * 80);
+        if (single) rx = 40;
+        makerEnv.setOddY(oddY);
+        let ii = 0;
+        while (ii++ < 12 && rx < r(sceneWidth + 200)) {
+            const ry_ = ry - r(random() * (25 + offsetY / 2));
+            const castle = makeCastle(makerEnv, ry_);
+
+            if (false)
+                withCtx((ctx) => {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "#F00";
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(0, top(ry_));
+                    ctx.lineTo(1000, top(ry_));
+                    ctx.closePath();
+                    ctx.stroke();
+                });
+            withCtx((ctx) =>
+                ctx.drawImage(
+                    castle.canvas,
+                    0,
+                    0,
+                    castle.width,
+                    castle.height,
+                    left(rx) + castle.x,
+                    top(ry_) + castle.y,
+                    castle.width,
+                    castle.height,
+                ),
+            );
+            rx += r(castle.width + 10 + random() * 60);
             if (single) break;
         }
         if (single) break;
-        y += r(40 + offsetY + random() * 40);
+        ry += r(40 + offsetY + random() * 40);
         offsetY += 15;
         oddY = !oddY;
     }
+    console.log("makeScene:", Date.now() - time, "ms");
 };

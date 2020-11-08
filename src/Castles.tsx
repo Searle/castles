@@ -16,12 +16,11 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
         if (canvasEl === null) {
             return;
         }
-        const ctx = canvasEl?.getContext("2d");
-        if (ctx === null) {
-            return;
+        if (width > 0 && height > 0) {
+            console.log("WH changed:", width, height);
+            const env = makeEnv(canvasEl, width, height);
+            makeScene(env);
         }
-        const env = makeEnv(ctx, width, height);
-        makeScene(env);
     }, [width, height]);
 
     return <canvas ref={canvasRef} width={width} height={height} style={{ width, height }} />;
