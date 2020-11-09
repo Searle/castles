@@ -40,7 +40,7 @@ const makeSun = (env: Env) => {
 };
 
 export const makeScene = (env: Env) => {
-    const { withCtx, r, random, left, top, sceneWidth, sceneHeight } = env;
+    const { r, random, left, top, sceneWidth, sceneHeight } = env;
     makeSky(env);
     makeSun(env);
 
@@ -49,7 +49,7 @@ export const makeScene = (env: Env) => {
 
     const makerCanvas = document.createElement("canvas");
     makerCanvas.width = sceneWidth;
-    makerCanvas.height = sceneHeight;
+    makerCanvas.height = sceneHeight + env.resolution;
     const makerEnv = makeEnv(makerCanvas, sceneWidth, sceneHeight);
 
     var layers: Layers = [];
@@ -58,16 +58,17 @@ export const makeScene = (env: Env) => {
     let offsetY = 0;
     let oddY = false;
     while (ry < r(sceneHeight)) {
-        let rx = r(-80 + random() * 80);
+        const rx0 = r(-80 + random() * 80);
+        let rx = rx0;
         if (single) rx = 40;
         makerEnv.setOddY(oddY);
         const layer: Layer = {
             items: [],
+            width: 0,
         };
-        while (rx < r(sceneWidth + 200)) {
+        while (rx < r(sceneWidth * 2 + 200)) {
             const ry_ = ry - r(random() * (25 + offsetY / 2));
             const castle = makeCastle(makerEnv, ry_);
-
             layer.items.push({
                 canvas: castle.canvas,
                 x: left(rx) + castle.x,
@@ -75,33 +76,8 @@ export const makeScene = (env: Env) => {
                 width: castle.width,
                 height: castle.height,
             });
-            if (false)
-                withCtx((ctx) => {
-                    ctx.beginPath();
-                    ctx.strokeStyle = "#F00";
-                    ctx.lineWidth = 1;
-                    ctx.moveTo(0, top(ry_));
-                    ctx.lineTo(1000, top(ry_));
-                    ctx.closePath();
-                    ctx.stroke();
-                });
-            /*                
-            withCtx((ctx) =>
-                ctx.drawImage(
-                    castle.canvas,
-                    0,
-                    0,
-                    castle.width,
-                    castle.height,
-                    left(rx) + castle.x,
-                    top(ry_) + castle.y,
-                    castle.width,
-                    castle.height,
-                ),
-            );
-*/
-
-            rx += r(castle.width + 10 + random() * 60);
+            rx += r(castle.castleWidth + random() * 80);
+            layer.width = left(rx - rx0);
             if (single) break;
         }
         layers.push(layer);

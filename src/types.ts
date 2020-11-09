@@ -13,6 +13,7 @@ export interface LayerItem {
 
 export interface Layer {
     items: LayerItem[];
+    width: number;
 }
 
 export type Layers = Layer[];

@@ -44,27 +44,27 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
             return;
         }
         itemsEl.textContent = "";
-        console.log(stageX);
         layers.forEach((layer, layerIndex) => {
             layer.items.forEach((item) => {
                 item.canvas.className = "layerItem";
+                item.canvas.style.zIndex = String(layerIndex);
                 itemsEl.appendChild(item.canvas);
-                const x = item.x - (stageX % 100) * (1 + layerIndex / 3);
+                const x = ((item.x + width * 1000 + stageX * (1 + layerIndex / 3)) % layer.width) - 200;
                 item.canvas.style.transform = "translate(" + x + "px," + item.y + "px)";
             });
         });
-    }, [stageX, layers]);
+    }, [stageX, layers, width]);
 
     const [loopStop, loopStart, isActive] = useRafLoop((time) => {
         setTicks((ticks) => ticks + 1);
         setLastCall(time);
 
-        setStageX(stageX + 1);
+        setStageX(stageX - 1);
     }, false);
     const ui = (
         <div className={classes.ui}>
-            <div>RAF triggered: {ticks} (times)</div>
-            <div>Last high res timestamp: {lastCall}</div>
+            <div className={classes.debug}>RAF triggered: {ticks} (times)</div>
+            <div className={classes.debug}>Last high res timestamp: {lastCall}</div>
             <button
                 onClick={() => {
                     if (isActive()) loopStop();
@@ -89,6 +89,9 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
 const useStyles = createUseStyles({
     root: {
         position: "relative",
+    },
+    debug: {
+        display: "none",
     },
     layers: {
         zIndex: 1,

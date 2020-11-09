@@ -35,7 +35,7 @@ export const makeEnv = (canvas: HTMLCanvasElement, width: number, height: number
             return value < min ? min : value;
         },
         top: (value: number) => value * resolution + offsetY,
-        bottom: (value: number) => Math.min(value * resolution + offsetY, height),
+        bottom: (value: number) => Math.min(value * resolution, height) + offsetY,
         left: (value: number) => value * resolution,
         right: (value: number) => value * resolution + resolution / 2,
         setOddY: (oddY: boolean) => (offsetY = oddY ? resolution / 2 : 0),

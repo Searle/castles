@@ -112,14 +112,14 @@ const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: numbe
 };
 
 export const makeCastle = (env: Env, ry0: number) => {
-    const { random, withCtx, r, left, top, canvas, sceneWidth, sceneHeight } = env;
+    const { random, withCtx, r, left, right, top, canvas, sceneWidth } = env;
 
     const color = 255 - Math.floor(random() * 35);
     const greyColor = "rgb(" + color + "," + color + "," + color + ")";
     const redColor = "rgb(255," + (color - 50) + "," + (color - 50) + ")";
 
     const rx0 = 10;
-    const extent = makeExtent(10);
+    const extent = makeExtent(100);
 
     const makeCastlePart = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number, mayHaveRoof: boolean) => {
         const { random, left, right, top, bottom } = env;
@@ -135,7 +135,7 @@ export const makeCastle = (env: Env, ry0: number) => {
 
         const x0 = left(rx0);
         const x1 = right(rx1);
-        const y1 = bottom(ry1 || 9999);
+        const y1 = bottom(ry1 || 1e9);
         const y0 = top(ry0);
         extent.addRect(x0, y0, x1, y1);
         withCtx((ctx) => (ctx.fillStyle = greyColor));
@@ -160,7 +160,7 @@ export const makeCastle = (env: Env, ry0: number) => {
     };
 
     env.withCtx((ctx) => {
-        ctx.clearRect(0, 0, sceneWidth, sceneHeight);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1.1;
     });
@@ -183,6 +183,7 @@ export const makeCastle = (env: Env, ry0: number) => {
         canvas: canvas1,
         x: extent.x0 - left(rx0),
         y: extent.y0 - top(ry0),
+        castleWidth: right(rx1) - left(rx0),
         width: canvas1Width,
         height: canvas1Height,
     };
