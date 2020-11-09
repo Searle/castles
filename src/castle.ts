@@ -77,13 +77,17 @@ const makeCrenels = (env: Env, extent: Extent, rx0: number, rx1: number, ry: num
 const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number) => {
     const { random, left, right, top, bottom, resolution } = env;
 
-    // FIXME: Bessere Y-Plazierung wenn kein Platz
     // TODO: Mehrere Reihen
-    const y0 = top(ry0) + random() * 5;
-    const y1 = bottom(ry1);
-    if (y0 + 20 < y1) {
+
+    let wy0 = 0;
+    if (ry1 === 0 || ry1 - ry0 >= 25) {
+        wy0 = top(ry0 + 3) + random() * 5;
+    } else if (ry1 - ry0 >= 5) {
+        wy0 = top((ry0 + ry1) / 2);
+    } else {
         return;
     }
+
     const x0 = left(rx0);
     const x1 = right(rx1);
     const width = x1 - x0;
@@ -94,7 +98,6 @@ const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: numbe
                 continue;
             }
             const wx = x0 + (width * i) / windows;
-            const wy0 = top(ry0 + 3);
             const wx0 = wx - resolution * 0.3;
             const wx1 = wx + resolution * 0.3;
             if (random() < 0.5) {

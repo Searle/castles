@@ -1,31 +1,26 @@
 {
-  "name": "spline-test-2",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "main": "src/index.tsx",
-  "dependencies": {
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "react-jss": "10.4.0",
-    "react-scripts": "4.0.0",
-    "react-use": "15.3.4"
-  },
-  "devDependencies": {
-    "@types/react": "16.9.19",
-    "@types/react-dom": "16.9.5",
-    "typescript": "3.7.5"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+    "name": "castles-doodle",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [],
+    "main": "src/index.tsx",
+    "dependencies": {
+        "react": "17.0.1",
+        "react-dom": "17.0.1",
+        "react-jss": "10.4.0",
+        "react-scripts": "4.0.0",
+        "react-use": "15.3.4"
+    },
+    "devDependencies": {
+        "@types/react": "16.9.19",
+        "@types/react-dom": "16.9.5",
+        "typescript": "3.7.5"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject"
+    },
+    "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
 }
