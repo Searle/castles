@@ -1,5 +1,6 @@
 import { makeCastle } from "./castle";
 import { Env, makeEnv } from "./env";
+import { Layers, Layer } from "./types";
 
 const makeSky = (env: Env) => {
     const { withCtx, sceneWidth, sceneHeight } = env;
@@ -51,6 +52,8 @@ export const makeScene = (env: Env) => {
     makerCanvas.height = sceneHeight;
     const makerEnv = makeEnv(makerCanvas, sceneWidth, sceneHeight);
 
+    var layers: Layers = [];
+
     let ry = r(180);
     let offsetY = 0;
     let oddY = false;
@@ -58,11 +61,20 @@ export const makeScene = (env: Env) => {
         let rx = r(-80 + random() * 80);
         if (single) rx = 40;
         makerEnv.setOddY(oddY);
-        let ii = 0;
-        while (ii++ < 12 && rx < r(sceneWidth + 200)) {
+        const layer: Layer = {
+            items: [],
+        };
+        while (rx < r(sceneWidth + 200)) {
             const ry_ = ry - r(random() * (25 + offsetY / 2));
             const castle = makeCastle(makerEnv, ry_);
 
+            layer.items.push({
+                canvas: castle.canvas,
+                x: left(rx) + castle.x,
+                y: top(ry_) + castle.y,
+                width: castle.width,
+                height: castle.height,
+            });
             if (false)
                 withCtx((ctx) => {
                     ctx.beginPath();
@@ -73,6 +85,7 @@ export const makeScene = (env: Env) => {
                     ctx.closePath();
                     ctx.stroke();
                 });
+            /*                
             withCtx((ctx) =>
                 ctx.drawImage(
                     castle.canvas,
@@ -86,13 +99,17 @@ export const makeScene = (env: Env) => {
                     castle.height,
                 ),
             );
+*/
+
             rx += r(castle.width + 10 + random() * 60);
             if (single) break;
         }
+        layers.push(layer);
         if (single) break;
         ry += r(40 + offsetY + random() * 40);
         offsetY += 15;
         oddY = !oddY;
     }
     console.log("makeScene:", Date.now() - time, "ms");
+    return layers;
 };

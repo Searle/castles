@@ -33,7 +33,6 @@ const makeExtent = (padding = 0) => {
                 if (newY0 < y0) y0 = newY0;
                 if (newY1 > y1) y1 = newY1;
             }
-            ///            console.log("Extent now", x0, y0, x1, y1, "::", newX0, newY0, newX1, newY1);
         },
     };
 };
@@ -59,7 +58,6 @@ const makeCrenels = (env: Env, extent: Extent, rx0: number, rx1: number, ry: num
     const x0 = left(rx0 - 1);
     const x1 = right(rx1 + 1);
     extent.addRect(x0, y0, x1, y2);
-    /// console.log("CRENELS:", rx0, rx1, ry);
     const width = x1 - x0;
     const crenels = Math.floor((width + resolution) / (resolution * 2));
     if (crenels) {
@@ -116,13 +114,11 @@ const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: numbe
 export const makeCastle = (env: Env, ry0: number) => {
     const { random, withCtx, r, left, top, canvas, sceneWidth, sceneHeight } = env;
 
-    const rx0 = 10;
-    // const ry0 = 40;
-
     const color = 255 - Math.floor(random() * 35);
     const greyColor = "rgb(" + color + "," + color + "," + color + ")";
     const redColor = "rgb(255," + (color - 50) + "," + (color - 50) + ")";
 
+    const rx0 = 10;
     const extent = makeExtent(10);
 
     const makeCastlePart = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number, mayHaveRoof: boolean) => {
@@ -178,19 +174,10 @@ export const makeCastle = (env: Env, ry0: number) => {
     canvas1.width = canvas1Width;
     canvas1.height = canvas1Height;
 
-    /// console.log("makeCastle EXTENT", canvas.width, extent, canvas1Width, canvas1Height);
-
     const ctx1 = canvas1.getContext("2d");
     if (ctx1 !== null) {
-        //ctx1.clearRect(0, 0, canvas1Width, canvas1Height);
-        //ctx1.fill();
-        //ctx1.fillStyle = "red";
-        //ctx1.beginPath();
-        //ctx1.fillRect(0, 0, canvas1Width * 20, canvas1Height * 20);
         ctx1.drawImage(canvas, extent.x0, extent.y0, canvas1Width, canvas1Height, 0, 0, canvas1Width, canvas1Height);
-        //ctx1.closePath();
     }
-    /// console.log("RR", extent.y1, extent.y0, top(ry0));
 
     return {
         canvas: canvas1,
@@ -199,8 +186,6 @@ export const makeCastle = (env: Env, ry0: number) => {
         width: canvas1Width,
         height: canvas1Height,
     };
-
-    /// return [rx1 - rx0, 200];
 };
 
 export type Castle = ReturnType<typeof makeCastle>;
