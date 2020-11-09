@@ -16,15 +16,13 @@ interface CastlesProps {
 
 export const Castles: FC<CastlesProps> = ({ width, height }) => {
     const classes = useStyles(); // eslint-disable-line @typescript-eslint/no-use-before-define
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const itemsRef = useRef<HTMLDivElement>(null);
-
-    const [ticks, setTicks] = React.useState(0);
-    const [lastCall, setLastCall] = React.useState(0);
     const update = useUpdate();
 
     const [layers, setLayers] = useState<Layers>([]);
     const [stageX, setStageX] = useState(0);
+
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const itemsRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const canvasEl = canvasRef.current;
@@ -32,7 +30,7 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
             return;
         }
         if (width > 0 && height > 0) {
-            console.log("WH changed:", width, height);
+            // console.log("WH changed:", width, height);
             const env = makeEnv(canvasEl, width, height);
             setLayers(makeScene(env));
         }
@@ -56,15 +54,10 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
     }, [stageX, layers, width]);
 
     const [loopStop, loopStart, isActive] = useRafLoop((time) => {
-        setTicks((ticks) => ticks + 1);
-        setLastCall(time);
-
         setStageX(stageX - 1);
     }, false);
     const ui = (
         <div className={classes.ui}>
-            <div className={classes.debug}>RAF triggered: {ticks} (times)</div>
-            <div className={classes.debug}>Last high res timestamp: {lastCall}</div>
             <button
                 onClick={() => {
                     if (isActive()) loopStop();
@@ -89,9 +82,6 @@ export const Castles: FC<CastlesProps> = ({ width, height }) => {
 const useStyles = createUseStyles({
     root: {
         position: "relative",
-    },
-    debug: {
-        display: "none",
     },
     layers: {
         zIndex: 1,

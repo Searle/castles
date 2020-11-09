@@ -2,7 +2,6 @@ import { Point } from "./types";
 
 // https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
 const xoshiro128ss = (a: number, b: number, c: number, d: number) => {
-    console.log("SEED", a);
     return () => {
         var t = b << 9,
             r = a * 5;
@@ -22,7 +21,6 @@ export const makeEnv = (canvas: HTMLCanvasElement, width: number, height: number
     let offsetY = 0;
     let points: Point[] = [];
     const random = xoshiro128ss(Date.now(), 2600980751997770790, 3131701164191746090, -3375623441569470803);
-    /// const random = xoshiro128ss(123000, 2600980751997770790, 3131701164191746090, -3375623441569470803);
     return {
         canvas,
         random,
