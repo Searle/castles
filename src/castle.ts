@@ -75,11 +75,11 @@ const makeCrenels = (env: Env, extent: Extent, rx0: number, rx1: number, ry: num
 };
 
 const makeWindows = (env: Env, rx0: number, rx1: number, ry0: number, ry1: number) => {
-    const { random, left, right, top, bottom, resolution } = env;
+    const { random, left, right, top, resolution } = env;
 
     // TODO: Mehrere Reihen
 
-    let wy0 = 0;
+    let wy0;
     if (ry1 === 0 || ry1 - ry0 >= 25) {
         wy0 = top(ry0 + 3) + random() * 5;
     } else if (ry1 - ry0 >= 5) {
